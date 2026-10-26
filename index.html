@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>읽음 너머의 이야기</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#e9e9ed;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif;color:#191919}
+button{font:inherit;cursor:pointer;border:0}
+button:focus-visible{outline:3px solid #317aff;outline-offset:3px}
+.phone{position:relative;width:min(100%,400px);height:100dvh;max-height:850px;margin:auto;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.status{height:48px;padding:15px 24px 8px;display:flex;justify-content:space-between;font-size:13px;font-weight:700;flex-shrink:0;z-index:2}
+.island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:108px;height:25px;background:#151515;border-radius:22px;z-index:5}
+#screen{flex:1;min-height:0;overflow:auto}
+.homebar{height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:inherit}
+.homebar button{width:125px;height:5px;background:currentColor;border-radius:9px;padding:0}
+.wallpaper{background:radial-gradient(ellipse at 5% 85%,#f6b3b8,transparent 58%),radial-gradient(ellipse at 95% 10%,#b4cbef,transparent 60%),linear-gradient(140deg,#c9bce6,#ede0ce);color:#fff}
+.lock{text-align:center;padding:28px 24px}
+.date{font-size:18px;font-weight:600}
+.clock{font-size:83px;font-weight:700;letter-spacing:-5px;line-height:1.2}
+.notice{margin:28px 0 20px;text-align:left;background:#ffffff91;color:#252533;border-radius:20px;padding:16px;font-size:14px;line-height:1.6;backdrop-filter:blur(15px)}
+.notice small{display:block;color:#555568;margin-bottom:5px}
+.dots{display:flex;justify-content:center;gap:17px;margin:18px}
+.dot{width:12px;height:12px;border:1.5px solid white;border-radius:50%}
+.dot.on{background:white}
+.keypad{display:grid;grid-template-columns:repeat(3,70px);gap:13px 25px;justify-content:center;margin-top:20px}
+.keypad button{height:64px;border-radius:50%;background:#ffffff36;color:#fff;font-size:28px}
+.keypad .plain{background:transparent;font-size:14px}
+.error{height:24px;font-size:12px}
+.home{padding:20px}
+.widget{background:#ffffffb8;color:#343347;border-radius:25px;padding:20px;backdrop-filter:blur(15px);min-height:146px}
+.widget small{color:#796b8c}
+.widget h2{margin:8px 0;font-size:24px}
+.widget p{font-size:13px;line-height:1.6;margin:0}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px 12px;margin-top:28px}
+.app{background:none;color:#fff;padding:0;font-size:12px;text-shadow:0 1px 4px #5555}
+.icon{width:59px;height:59px;border-radius:15px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 3px 8px #0001;text-shadow:none}
+.talk{background:#fee500;color:#302824;font-size:17px;font-weight:900}
+.photos{background:white}
+.notes{background:linear-gradient(#ffd852 28%,#fff 28%);color:#999}
+.calendar{background:white;color:#333;flex-direction:column;font-size:28px}
+.calendar small{font-size:10px;color:#f35e65}
+.gift{background:linear-gradient(135deg,#ffb6b6,#e779a4)}
+.dock{margin-top:48px;border-radius:25px;background:#ffffff40;padding:14px;text-align:center;font-size:12px;line-height:1.7}
+.header{height:60px;display:flex;align-items:center;gap:12px;padding:0 16px;border-bottom:1px solid #00000009;background:#ffffffed;position:sticky;top:0;z-index:2}
+.header button{background:none;color:#3478ee;font-size:16px;padding:8px 0}
+.header strong{font-size:17px}
+.header small{margin-left:auto;color:#777;font-size:12px}
+.content{padding:20px}
+.row{display:flex;align-items:center;width:100%;text-align:left;background:#fff;padding:20px 16px;gap:12px;border-bottom:1px solid #f0f0f0}
+.avatar{background:#e8dfeb;border-radius:18px;min-width:47px;height:47px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.row strong{display:block;font-size:15px}
+.row p{color:#888;font-size:12px;margin:7px 0 0;line-height:1.5}
+.badge{margin-left:auto;border-radius:20px;background:#ff615d;color:white;font-size:11px;padding:3px 7px}
+.chat{background:#b6c8d6;min-height:100%}
+.chat .header{background:#b6c8d6}
+.thread{padding:15px 14px 26px}
+.day{text-align:center;font-size:11px;color:#536474;margin:8px 0 24px}
+.message{display:flex;gap:8px;margin:15px 0}
+.message .avatar{min-width:34px;height:34px;font-size:18px;border-radius:12px}
+.name{font-size:11px;color:#435160;margin-bottom:5px}
+.bubble{background:white;border-radius:0 13px 13px 13px;padding:11px 13px;font-size:14px;line-height:1.6;max-width:270px;white-space:pre-line}
+.mine{justify-content:flex-end}
+.mine .bubble{background:#fee500;border-radius:13px 0 13px 13px}
+.choices{padding:16px;background:#ffffffb5;border-radius:18px;margin-top:20px}
+.choices p{font-size:13px;line-height:1.6;margin-top:0}
+.choice{display:block;width:100%;background:white;border:1px solid #dde1e7;border-radius:12px;padding:12px;text-align:left;font-size:13px;line-height:1.6;margin:8px 0}
+.feedback{font-size:13px;line-height:1.7;color:#765b29;margin-top:12px;white-space:pre-line}
+.primary{width:100%;background:#242b42;color:white;border-radius:14px;padding:15px;margin-top:12px;font-weight:600}
+.primary:disabled{background:#b9bdc6;cursor:default}
+.hint{font-size:12px;color:#63717e;line-height:1.7;padding:12px;background:#ffffff8c;border-radius:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.thumb{min-height:170px;padding:12px;border-radius:5px;text-align:left}
+.poster{background:#e8f2c9;color:#283e2a;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:9px solid #d6e6b3}
+.poster h2{font-size:24px;margin:12px 0}
+.poster p{font-size:12px;line-height:1.7}
+.upload{background:#f0f1f5;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#777;text-align:center}
+.upload b{font-size:35px;color:#e08880;margin-bottom:15px}
+.caption{font-size:12px;line-height:1.8;color:#777}
+.note{background:#fffdf1;min-height:100%;line-height:2;font-size:15px}
+.note h2{font-size:23px;margin-top:0}
+.note p{border-bottom:1px solid #e9e5d7;padding-bottom:12px}
+.finish{text-align:center;padding:35px 25px}
+.seal{font-size:72px;margin:24px 0}
+.finish h1{font-size:29px}
+.finish p{font-size:14px;line-height:1.9;color:#6c6c78}
+.ticket{border:2px dashed #c4b0cd;border-radius:20px;padding:23px 15px;margin-top:25px;background:#fcf7ff}
+.ticket strong{font-size:22px;color:#795b8d}
+.reset{background:none;color:#999;font-size:12px;margin-top:30px;text-decoration:underline}
+@media(min-width:500px){
+body{min-height:100dvh;display:flex;align-items:center;padding:18px}
+.phone{height:min(850px,94dvh);border:7px solid #242424;border-radius:45px;box-shadow:0 25px 70px #0003}
+}
+@media(max-height:720px){
+.lock{padding-top:12px}.clock{font-size:66px}.notice{margin:14px 0}.keypad{gap:8px 25px}.keypad button{height:53px}
+}
+</style>
+</head>
+<body>
+<main class="phone wallpaper" id="phone">
+<div class="island"></div>
+<div class="status"><span>9:00</span><span>▮▮▮  ◕  ▰</span></div>
+<div id="screen"></div>
+<div class="homebar"><button aria-label="홈 화면으로 이동" onclick="goHome()"></button></div>
+</main>
+<script>
+const KEY="friendship-phone-v1";
+let saved={};
+try{saved=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){}
+let state={
+ unlocked:saved.unlocked===true,
+ done:Array.isArray(saved.done)?[0,1,2].filter(i=>saved.done.includes(i)):[],
+ seen:Array.isArray(saved.seen)?saved.seen:[]
+};
+let pin="",current="",feedback="";
+const screen=document.getElementById("screen");
+const phone=document.getElementById("phone");
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function header(title,back="home"){
+ return `<div class="header"><button onclick="openApp('${back}')">‹ 뒤로</button><strong>${title}</strong><small>${state.done.length}/3 완료</small></div>`;
+}
+function show(html,wall=false){
+ phone.classList.toggle("wallpaper",wall);
+ screen.innerHTML=html;
+ screen.scrollTop=0;
+}
+function goHome(){if(state.unlocked)openApp("home")}
+function lock(){
+ current="lock";
+ show(`<div class="lock">
+ <div class="date">11월 11일 수요일</div>
+ <div class="clock">09:00</div>
+ <div class="notice"><small>💬 행사 준비 단톡방 · 지금</small><b>민서</b><br>공용폰 비번은 우리 행사 날짜 네 자리야 ㅋㅋ</div>
+ <div>암호 입력</div>
+ <div class="dots">${[0,1,2,3].map(i=>`<span class="dot ${pin.length>i?"on":""}"></span>`).join("")}</div>
+ <div class="error" role="status">${feedback}</div>
+ <div class="keypad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="digit('${n}')">${n}</button>`).join("")}
+ <button class="plain" onclick="lockHint()">힌트</button><button onclick="digit('0')">0</button><button class="plain" onclick="erase()">지우기</button></div>
+ </div>`,true);
+}
+function lockHint(){feedback="화면의 행사 날짜를 네 자리로 입력해 봐!";lock()}
+function erase(){pin=pin.slice(0,-1);feedback="";lock()}
+function digit(n){
+ if(pin.length>=4)return;
+ pin+=n;feedback="";
+ if(pin.length===4){
+  if(pin==="1111"){state.unlocked=true;save();openApp("home");return}
+  feedback="날짜를 다시 확인해 봐!";pin="";
+ }
+ lock();
+}
+document.addEventListener("keydown",e=>{
+ if(current!=="lock")return;
+ if(/^[0-9]$/.test(e.key))digit(e.key);
+ if(e.key==="Backspace")erase();
+});
+function openApp(app){
+ if(!state.unlocked){lock();return}
+ current=app;feedback="";
+ if(app==="home"){
+ show(`<div class="home">
+ <div class="widget"><small>WEDNESDAY · NOVEMBER 11</small><h2>친구사랑주간</h2><p>행사 준비용 공용폰<br>메신저에 새 메시지가 도착했어요.</p></div>
+ <div class="apps">
+ <button class="app" onclick="openApp('talk')"><span class="icon talk">TALK</span>메신저</button>
+ <button class="app" onclick="openApp('photos')"><span class="icon photos">🌸</span>사진</button>
+ <button class="app" onclick="openApp('notes')"><span class="icon notes">≡</span>메모</button>
+ <button class="app" onclick="openApp('calendar')"><span class="icon calendar"><small>수요일</small>11</span>캘린더</button>
+ <button class="app" onclick="openApp('gift')"><span class="icon gift">🎁</span>선물</button>
+ </div>
+ <div class="dock">읽음 너머의 이야기<br>메신저 속 민서와 대화하며 사건을 풀어보세요.<br>미션 ${state.done.length}/3 완료</div>
+ </div>`,true);
+ }else if(app==="talk"){
+ show(header("채팅")+`
+ <button class="row" onclick="chat('mission')"><span class="avatar">🐱</span><div><strong>민서</strong><p>${state.done.length===3?"고마워! 선물 앱 확인해 봐 🎁":"지우가 내일 안 온대. 무슨 일인지 같이 확인해줄래?"}</p></div><span class="badge">1</span></button>
+ <button class="row" onclick="chat('group')"><span class="avatar">🏫</span><div><strong>친구사랑주간 준비팀</strong><p>지우: 됐어. 내일 나 빼고 해.</p></div></button>
+ <button class="row" onclick="chat('snack')"><span class="avatar">🍫</span><div><strong>간식 준비</strong><p>도윤: 일단 준비 메모도 확인해보자.</p></div></button>`);
+ }else if(app==="photos"){
+ markSeen("photos");
+ show(header("사진")+`<div class="content"><h2>보관함</h2><p class="caption">2장 · 11월 10일</p><div class="grid">
+ <button class="thumb poster" onclick="openApp('poster')"><small>11.11</small><h2>친구사랑<br>주간</h2><p>서로의 하루에<br>다정한 한마디</p></button>
+ <button class="thumb upload" onclick="openApp('errorPhoto')"><b>!</b><strong>업로드 실패</strong><p>연결이 불안정합니다.</p></button>
+ </div><p class="caption">사진을 누르면 자세히 볼 수 있어요.</p></div>`);
+ }else if(app==="poster"){
+ show(header("사진 보기","photos")+`<div class="content"><div class="poster" style="min-height:350px"><small>11월 11일</small><h2>친구사랑주간</h2><div style="font-size:60px">☘</div><p>서로의 하루에 다정한 한마디</p></div><p class="caption">지우가 완성한 포스터<br>11월 10일 오후 6:20</p></div>`);
+ }else if(app==="errorPhoto"){
+ show(header("사진 보기","photos")+`<div class="content"><div class="upload" style="min-height:350px"><b>!</b><h2>업로드 실패</h2><p>연결이 불안정합니다.<br>다시 시도해 주세요.</p></div><p class="caption">공유 폴더 업로드 화면<br>11월 10일 오후 6:25</p></div>`);
+ }else if(app==="notes"){
+ markSeen("notes");
+ show(header("메모")+`<div class="content note"><small>11월 10일 오후 6:30</small><h2>행사 준비 인수인계</h2>
+ <p>☑ 포스터 디자인: 지우<br>완성 파일은 공용폰 사진첩에 저장.</p>
+ <p>☐ 공유 폴더 연결이 자꾸 끊김.<br>안 올라가면 내일 공용폰 파일로 출력하기.</p>
+ <p>☐ 간식은 초콜릿과 쌀과자 두 종류로 준비.</p>
+ <p>초콜릿을 먹기 어려운 친구도 있으니 직접 고를 수 있게 놓기.</p>
+ <p>☐ 선물은 미션 완료 화면을 확인한 뒤 한 명당 한 번 전달.</p></div>`);
+ }else if(app==="calendar"){
+ show(header("캘린더")+`<div class="content"><p class="caption">11월 11일 수요일</p><h2>오늘의 일정</h2><div class="widget" style="background:#f0edf7"><small>점심시간</small><h2>친구사랑주간 행사</h2><p>① 포스터 출력<br>② 간식 준비<br>③ 서로에게 다정한 한마디</p></div></div>`);
+ }else if(app==="gift"){
+ gift();
+ }
+}
+function markSeen(id){if(!state.seen.includes(id)){state.seen.push(id);save()}}
+function msg(name,text,mine=false){
+ return `<div class="message ${mine?"mine":""}">${mine?"":`<span class="avatar">${name==="민서"?"🐱":name==="지우"?"🐰":"🐻"}</span>`}<div>${mine?"":`<div class="name">${name}</div>`}<div class="bubble">${text}</div></div></div>`;
+}
+const group=[
+ ["민서","내일 행사 포스터 공유 폴더에 올렸어?"],
+ ["지우","잠깐만. 지금 다시 해볼게."],
+ ["도윤","아직도 안 했어? 오늘까지 해야 되는데."],
+ ["민서","지우야 확인하면 답 좀 줘."],
+ ["지우","됐어. 내일 나 빼고 해."]
+];
+const snack=[
+ ["민서","선물 간식은 초콜릿으로 통일할까?"],
+ ["도윤","난 좋아 ㅋㅋ 포장도 편하고."],
+ ["지우","초콜릿 말고 다른 것도 조금 준비하면 어때?"],
+ ["민서","종류 많으면 복잡하지 않을까?"],
+ ["지우","아 그럼 난 아무거나."],
+ ["도윤","일단 준비 메모도 확인해보자."]
+];
+const missions=[
+ {
+ intro:"지우가 내일 안 온대… 내가 포스터 안 했냐고 재촉했거든.\n사진첩이랑 준비팀 단톡방을 확인해줄래? 실제로 어떤 상황이었던 거야?",
+ choices:["지우가 포스터를 아직 안 만들었네.","포스터는 완성했는데 업로드가 안 된 거야.","행사 파일을 삭제한 것 같아."],
+ answer:1,
+ hint:"사진첩에 있는 포스터와 오류 화면의 시간을 확인해 봐.",
+ reply:"아… 완성했는데 전달이 안 된 거였네. 내가 확인도 안 하고 재촉했어.",
+ need:["photos"],go:"사진 앱에서 두 사진을 확인하고 돌아와 줘!"
+ },
+ {
+ intro:"간식 준비도 확인하고 있어. 지우는 아무거나라고 했는데…\n‘간식 준비’ 대화방이랑 메모를 보고 어떻게 준비하면 좋을지 알려줘.",
+ choices:["초콜릿과 쌀과자를 놓고 각자 고르게 하자.","준비하기 편하게 초콜릿만 주자.","아무거나라고 했으니까 메모는 무시해도 되겠지."],
+ answer:0,
+ hint:"메모에 두 종류의 간식을 준비한 이유가 있어.",
+ reply:"좋아. 각자 먹을 수 있는 걸 고르게 놓자! 내가 편한 것만 생각했네.",
+ need:["notes"],go:"메모 앱에서 행사 준비 인수인계를 확인해 줘!"
+ },
+ {
+ intro:"지우한테 연락하고 싶은데 뭐라고 말하면 좋을까?\n확인한 사실을 말하고, 재촉한 건 사과하고 싶어.",
+ choices:["그래도 네가 답장을 빨리 했으면 됐잖아.","다 잊고 내일 무조건 와.","포스터는 완성했는데 업로드가 안 됐던 거네. 안 한 줄 알고 재촉해서 미안해. 괜찮으면 내일 준비 같이 하자."],
+ answer:2,
+ hint:"상황을 확인하고, 내 말에 책임을 인정하면서 친구가 선택할 여지를 주면 어떨까?",
+ reply:"그렇게 보내볼게. 같이 확인해줘서 고마워!",
+ need:[],go:""
+ }
+];
+function chat(type){
+ current="chat-"+type;
+ if(type!=="mission"){
+ const data=type==="group"?group:snack;
+ show(`<div class="chat">${header(type==="group"?"친구사랑주간 준비팀":"간식 준비","talk")}<div class="thread"><div class="day">11월 10일 화요일</div>${data.map(x=>msg(...x)).join("")}<p class="hint">홈의 사진·메모에서도 관련 기록을 확인할 수 있어요.</p></div></div>`);
+ return;
+ }
+ missionChat();
+}
+function missionChat(){
+ current="chat-mission";
+ const i=state.done.length;
+ let html=`<div class="chat">${header("민서","talk")}<div class="thread"><div class="day">11월 11일 수요일</div>`;
+ html+=msg("민서","행사 준비 공용폰이야! 기록 같이 봐줘 🙏");
+ for(let j=0;j<i;j++){
+ html+=msg("나",missions[j].choices[missions[j].answer],true);
+ html+=msg("민서",missions[j].reply);
+ }
+ if(i<3){
+ const m=missions[i];
+ html+=msg("민서",m.intro);
+ html+=`<div class="choices"><p><b>답장 선택 · ${i+1}/3</b><br>다른 앱을 확인한 뒤 돌아와도 대화는 유지돼요.</p>
+ ${m.choices.map((c,n)=>`<button class="choice" onclick="answer(${i},${n})">${c}</button>`).join("")}
+ <div class="feedback" role="status">${feedback}</div>
+ <button class="choice" onclick="openApp('home')">⌂ 홈으로 가서 단서 확인하기</button></div>`;
+ }else{
+ html+=msg("지우","좀 서운하긴 했어. 내일… 아니 오늘 만나서 얘기하자.\n포스터는 공용폰에 있는 걸로 출력하면 돼.");
+ html+=msg("민서","응, 만나서 얘기하자. 준비도 같이 나눠서 하자!");
+ html+=`<div class="choices"><p>모든 미션을 완료했어요.</p><button class="primary" onclick="openApp('gift')">🎁 선물 수령 화면 열기</button></div>`;
+ }
+ show(html+"</div></div>");
+ screen.scrollTop=screen.scrollHeight;
+}
+function answer(i,n){
+ if(i!==state.done.length)return;
+ const m=missions[i];
+ if(m.need.some(x=>!state.seen.includes(x))){feedback=m.go;missionChat();return}
+ if(n!==m.answer){feedback=m.hint;missionChat();return}
+ state.done.push(i);save();feedback="";missionChat();
+}
+function gift(){
+ const complete=state.done.length===3;
+ show(header("선물")+`<div class="finish"><div class="seal">${complete?"🎁":"🔒"}</div>
+ <h1>${complete?"미션 완료!":"아직 준비 중이에요"}</h1>
+ <p>${complete?"읽음 너머의 이야기<br>메시지 몇 줄 뒤에는 우리가 아직<br>모르는 사정이 있을 수 있어요.":`민서와 대화하며 남은 미션을 해결해 주세요.<br>현재 ${state.done.length}/3 완료`}</p>
+ ${complete?`<div class="ticket"><strong>✓ 3/3 미션 완료</strong><p>이 화면을 행사 담당 선생님께 보여주고<br>선물을 받아 가세요!</p><small>선물은 1인 1회 수령입니다.</small></div>`:`<button class="primary" onclick="chat('mission')">민서와 대화하기</button>`}
+ <button class="reset" onclick="resetGame()">처음부터 다시 시작</button></div>`);
+}
+function resetGame(){
+ if(!confirm("진행 기록을 지우고 처음부터 시작할까요?"))return;
+ state={unlocked:false,done:[],seen:[]};pin="";feedback="";save();lock();
+}
+if(state.unlocked)openApp("home");else lock();
+</script>
+</body>
+</html>
